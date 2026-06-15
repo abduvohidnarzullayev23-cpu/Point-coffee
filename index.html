@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="uz" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Point Coffee — Boshqaruv tizimi</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- LOGIN SAHIFASI -->
+<div id="login-page" class="page active">
+  <div class="login-wrap">
+    <div class="login-logo">
+      <div class="login-icon"><i class="ti ti-coffee"></i></div>
+      <h1>Point Coffee</h1>
+      <p>Boshqaruv tizimi</p>
+    </div>
+    <div class="login-card">
+      <div class="form-group">
+        <label>Foydalanuvchi</label>
+        <select id="login-user">
+          <option value="">— Tanlang —</option>
+          <option value="vohid">Vohid (Buxgalter)</option>
+          <option value="jasur">Jasur (Direktor)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Parol</label>
+        <div class="pass-wrap">
+          <input type="password" id="login-pass" placeholder="Parolni kiriting...">
+          <button class="pass-eye" onclick="togglePass()" type="button"><i class="ti ti-eye" id="eye-icon"></i></button>
+        </div>
+      </div>
+      <div id="login-err" class="login-err hidden">Foydalanuvchi yoki parol noto'g'ri</div>
+      <button class="btn-login" onclick="doLogin()"><i class="ti ti-login"></i> Kirish</button>
+    </div>
+    <div class="login-hint">
+      <span>Demo: vohid / <b>1234</b> &nbsp;|&nbsp; jasur / <b>5678</b></span>
+    </div>
+  </div>
+</div>
+
+<!-- ASOSIY DASTUR -->
+<div id="app-page" class="page">
+
+  <!-- SIDEBAR -->
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-logo">
+      <i class="ti ti-coffee"></i>
+      <span>Point Coffee</span>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" onclick="showSection('dashboard',this)">
+        <i class="ti ti-layout-dashboard"></i><span>Dashboard</span>
+      </button>
+      <button class="nav-item" onclick="showSection('tasks',this)">
+        <i class="ti ti-checklist"></i><span>Vazifalar</span>
+      </button>
+      <button class="nav-item" onclick="showSection('payments',this)">
+        <i class="ti ti-calendar-due"></i><span>To'lovlar</span>
+      </button>
+      <button class="nav-item" onclick="showSection('documents',this)">
+        <i class="ti ti-files"></i><span>Hujjatlar</span>
+      </button>
+      <button class="nav-item" id="nav-jasur" onclick="showSection('jasur',this)" style="display:none">
+        <i class="ti ti-eye"></i><span>Jasur paneli</span>
+      </button>
+    </nav>
+    <div class="sidebar-bottom">
+      <button class="nav-item" onclick="toggleTheme()">
+        <i class="ti ti-moon" id="theme-icon"></i><span id="theme-label">Tungi rejim</span>
+      </button>
+      <button class="nav-item" onclick="doLogout()">
+        <i class="ti ti-logout"></i><span>Chiqish</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-wrap">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+      <button class="burger" onclick="toggleSidebar()"><i class="ti ti-menu-2"></i></button>
+      <div class="topbar-center">
+        <span id="section-title" class="section-title">Dashboard</span>
+      </div>
+      <div class="topbar-right">
+        <span class="date-chip" id="top-date"></span>
+        <div class="user-chip" id="user-chip">
+          <div class="user-avatar" id="user-avatar">V</div>
+          <span id="user-name">Vohid</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="content">
+
+      <!-- DASHBOARD -->
+      <section id="sec-dashboard" class="section active">
+        <div id="alert-banner" class="alert-banner hidden">
+          <i class="ti ti-alert-triangle"></i>
+          <span id="alert-text"></span>
+        </div>
+
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon warning"><i class="ti ti-clock"></i></div>
+            <div>
+              <div class="metric-label">Bugungi vazifalar</div>
+              <div class="metric-val" id="d-today">0</div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon danger"><i class="ti ti-alert-circle"></i></div>
+            <div>
+              <div class="metric-label">Kechikkan</div>
+              <div class="metric-val danger" id="d-late">0</div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon success"><i class="ti ti-check"></i></div>
+            <div>
+              <div class="metric-label">Bajarildi (bu oy)</div>
+              <div class="metric-val success" id="d-done">0</div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon info"><i class="ti ti-calendar"></i></div>
+            <div>
+              <div class="metric-label">Ertaga deadline</div>
+              <div class="metric-val info" id="d-tmr">0</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="two-col">
+          <div class="panel">
+            <div class="panel-head">
+              <i class="ti ti-sun"></i> Bugungi vazifalar
+            </div>
+            <div id="today-tasks-list" class="panel-body"></div>
+          </div>
+          <div class="panel">
+            <div class="panel-head">
+              <i class="ti ti-alert-triangle"></i> Kechikkan vazifalar
+            </div>
+            <div id="late-tasks-list" class="panel-body"></div>
+          </div>
+        </div>
+
+        <div class="panel" style="margin-top:1rem">
+          <div class="panel-head"><i class="ti ti-chart-bar"></i> Bu oyda bajarilgan vazifalar</div>
+          <div class="panel-body" style="padding:1rem">
+            <div id="chart-bars" class="chart-bars"></div>
+            <div class="chart-legend">
+              <span class="leg-dot success"></span> Bajarildi
+              <span class="leg-dot danger" style="margin-left:1rem"></span> Kechikkan
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- VAZIFALAR -->
+      <section id="sec-tasks" class="section">
+        <div class="panel">
+          <div class="panel-head"><i class="ti ti-plus"></i> Yangi vazifa</div>
+          <div class="panel-body" style="padding:1rem">
+            <div class="task-form">
+              <input type="text" id="t-name" placeholder="Vazifa nomi...">
+              <input type="date" id="t-date">
+              <select id="t-cat">
+                <option value="ijara">Ijara</option>
+                <option value="soliq">Soliq</option>
+                <option value="hisobot">Hisobot</option>
+                <option value="qaytarish">Qaytarish</option>
+                <option value="hujjat">Hujjat</option>
+                <option value="boshqa">Boshqa</option>
+              </select>
+              <select id="t-priority">
+                <option value="high">Muhim</option>
+                <option value="mid">O'rta</option>
+                <option value="low">Oddiy</option>
+              </select>
+              <button class="btn-primary" onclick="addTask()"><i class="ti ti-plus"></i> Qo'sh</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="filter-bar">
+          <button class="fbtn active" onclick="setFilter('all',this)">Hammasi</button>
+          <button class="fbtn" onclick="setFilter('today',this)">Bugun</button>
+          <button class="fbtn" onclick="setFilter('late',this)">Kechikkan</button>
+          <button class="fbtn" onclick="setFilter('ijara',this)">Ijara</button>
+          <button class="fbtn" onclick="setFilter('soliq',this)">Soliq</button>
+          <button class="fbtn" onclick="setFilter('hisobot',this)">Hisobot</button>
+          <button class="fbtn" onclick="setFilter('hujjat',this)">Hujjat</button>
+        </div>
+
+        <div id="task-list"></div>
+      </section>
+
+      <!-- TO'LOVLAR -->
+      <section id="sec-payments" class="section">
+        <div class="panel">
+          <div class="panel-head"><i class="ti ti-plus"></i> Yangi to'lov</div>
+          <div class="panel-body" style="padding:1rem">
+            <div class="task-form">
+              <input type="text" id="p-name" placeholder="To'lov nomi...">
+              <input type="number" id="p-amount" placeholder="Summa (so'm)">
+              <input type="date" id="p-date">
+              <select id="p-cat">
+                <option value="ijara">Ijara</option>
+                <option value="soliq">Soliq</option>
+                <option value="maosh">Maosh</option>
+                <option value="sim">SIM/Internet</option>
+                <option value="boshqa">Boshqa</option>
+              </select>
+              <button class="btn-primary" onclick="addPayment()"><i class="ti ti-plus"></i> Qo'sh</button>
+            </div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:1rem">
+          <div class="panel-head"><i class="ti ti-calendar-due"></i> To'lov kalendari</div>
+          <div id="payment-list" class="panel-body"></div>
+        </div>
+      </section>
+
+      <!-- HUJJATLAR -->
+      <section id="sec-documents" class="section">
+        <div class="panel">
+          <div class="panel-head"><i class="ti ti-upload"></i> Hujjat yuklash</div>
+          <div class="panel-body" style="padding:1rem">
+            <div class="upload-area" id="upload-area" onclick="document.getElementById('file-inp').click()">
+              <i class="ti ti-cloud-upload" style="font-size:32px;color:var(--text3)"></i>
+              <p style="color:var(--text2);font-size:13px;margin-top:8px">Faylni bosing yoki shu yerga tashlang</p>
+              <p style="color:var(--text3);font-size:11px;margin-top:4px">PDF, Word, Excel — max 10MB</p>
+              <input type="file" id="file-inp" style="display:none" multiple accept=".pdf,.doc,.docx,.xlsx,.xls" onchange="handleFiles(this.files)">
+            </div>
+            <div class="doc-form" style="margin-top:12px">
+              <input type="text" id="d-name" placeholder="Hujjat nomi...">
+              <select id="d-cat">
+                <option value="ijara">Ijara dalolatnomasi</option>
+                <option value="shartnoma">Shartnoma</option>
+                <option value="schot">Schot-faktura</option>
+                <option value="soliq">Soliq hujjati</option>
+                <option value="boshqa">Boshqa</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:1rem">
+          <div class="panel-head"><i class="ti ti-files"></i> Yuklangan hujjatlar</div>
+          <div id="doc-list" class="panel-body"></div>
+        </div>
+      </section>
+
+      <!-- JASUR PANELI -->
+      <section id="sec-jasur" class="section">
+        <div class="jasur-welcome">
+          <div class="jasur-avatar">J</div>
+          <div>
+            <h2>Salom, Jasur aka!</h2>
+            <p>Bugungi holat — <span id="jasur-date"></span></p>
+          </div>
+        </div>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-icon danger"><i class="ti ti-alert-circle"></i></div>
+            <div>
+              <div class="metric-label">Kechikkan to'lovlar</div>
+              <div class="metric-val danger" id="j-late">0</div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon warning"><i class="ti ti-clock"></i></div>
+            <div>
+              <div class="metric-label">Bugun bajarish kerak</div>
+              <div class="metric-val warning" id="j-today">0</div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon success"><i class="ti ti-check"></i></div>
+            <div>
+              <div class="metric-label">Bajarildi (bu oy)</div>
+              <div class="metric-val success" id="j-done">0</div>
+            </div>
+          </div>
+          <div class="metric-card">
+            <div class="metric-icon info"><i class="ti ti-files"></i></div>
+            <div>
+              <div class="metric-label">Hujjatlar</div>
+              <div class="metric-val info" id="j-docs">0</div>
+            </div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:1rem">
+          <div class="panel-head"><i class="ti ti-alert-triangle"></i> Tasdiqlash kerak bo'lgan to'lovlar</div>
+          <div id="jasur-pending" class="panel-body"></div>
+        </div>
+        <div class="panel" style="margin-top:1rem">
+          <div class="panel-head"><i class="ti ti-checklist"></i> Vohidning joriy vazifalari</div>
+          <div id="jasur-tasks" class="panel-body"></div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
